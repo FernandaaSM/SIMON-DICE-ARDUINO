@@ -1,0 +1,387 @@
+#include <Adafruit_LiquidCrystal.h>
+
+Adafruit_LiquidCrystal lcd_1(0);
+
+//Delcaro conexiones
+#define   In_Rojo      13
+#define   In_Verde     12
+#define   In_Amarillo  11
+#define   In_Naranja   A0
+#define   In_Azul      A1
+#define   In_Rojo2     A2
+#define   In_Blanco    A3
+#define   In_Verde2    A4
+#define   In_Amarillo2 A5
+#define   Rojo         10
+#define   Verde        9
+#define   Amarillo     8
+#define   Naranja      7
+#define   Azul         6
+#define   Rojo2        5
+#define   Blanco       4
+#define   Verde2       3
+#define   Amarillo2    2
+
+//declaro variables
+int i;
+int nivelActual = 1;
+int velocidad = 500;
+const int MaximoNivel = 6;
+int secuencia[MaximoNivel];
+int SecuenciaLeida[MaximoNivel];
+int score = 0;
+
+void setup(){
+   Serial.begin(9600);
+   lcd_1.begin(16, 2);
+   lcd_1.print("Inicio del juego");
+   lcd_1.clear();
+  
+   pinMode(In_Rojo, INPUT);
+   pinMode(In_Verde, INPUT);
+   pinMode(In_Amarillo, INPUT);
+   pinMode(In_Naranja, INPUT);
+   pinMode(In_Azul, INPUT);
+   pinMode(In_Rojo2, INPUT);
+   pinMode(In_Blanco, INPUT);
+   pinMode(In_Verde2, INPUT);
+   pinMode(In_Amarillo2, INPUT);
+   pinMode(Rojo, OUTPUT);
+   pinMode(Verde, OUTPUT);
+   pinMode(Amarillo, OUTPUT);
+   pinMode(Naranja, OUTPUT);
+   pinMode(Azul, OUTPUT);
+   pinMode(Rojo2, OUTPUT);
+   pinMode(Blanco, OUTPUT);
+   pinMode(Verde2, OUTPUT);
+   pinMode(Amarillo2, OUTPUT);
+   inicio();
+}
+
+void loop(){
+  
+   if(nivelActual == 1){ 
+     generaSecuencia();
+     for(int i = 0; i < MaximoNivel; i++){
+    	Serial.print(secuencia[i]);	
+    	Serial.print("__");
+     }
+     lcd_1.print("Pon atencion");
+ 	 lcd_1.clear();
+      muestraSecuencia();
+      leeSecuencia(); 
+   }
+   if(nivelActual != 1){ 
+      muestraSecuencia();
+      leeSecuencia();
+   }
+}
+
+
+void inicio(){
+  
+  lcd_1.print("Nueva partida");
+  lcd_1.clear();
+  
+ for (i = 1; i < 2; i++) {
+   digitalWrite(Rojo , HIGH);
+   delay(100);
+   digitalWrite(Rojo , LOW);
+   digitalWrite(Verde , HIGH);
+   delay(100);
+   digitalWrite(Verde, LOW);
+   digitalWrite(Amarillo , HIGH);
+   delay(100);
+   digitalWrite(Amarillo, LOW);
+   digitalWrite(Naranja , HIGH);
+   delay(100);
+   digitalWrite(Naranja, LOW);
+   digitalWrite(Azul , HIGH);
+   delay(100);
+   digitalWrite(Azul, LOW);
+   digitalWrite(Rojo2 , HIGH);
+   delay(100);
+   digitalWrite(Rojo2, LOW);
+   digitalWrite(Blanco , HIGH);
+   delay(100);
+   digitalWrite(Blanco, LOW);
+   digitalWrite(Verde2 , HIGH);
+   delay(100);
+   digitalWrite(Verde2, LOW);
+   digitalWrite(Amarillo2 , HIGH);
+   delay(100);
+   digitalWrite(Amarillo2 , LOW);
+   delay (200);
+ } 
+}
+
+
+void muestraSecuencia(){
+   for(int i = 0; i < nivelActual; i++){
+      if( secuencia[i] == Rojo ){
+         delay(200);
+      }
+      if( secuencia[i] == Verde ){
+         delay(200);
+      }
+      if( secuencia[i] == Amarillo ){
+         delay(200);
+      }
+      if( secuencia[i] == Naranja ){
+         delay(200);
+      }
+     if( secuencia[i] == Azul ){
+         delay(200);
+      }
+     if( secuencia[i] == Rojo2 ){
+         delay(200);
+      }
+     if( secuencia[i] == Blanco ){
+         delay(200);
+      }
+     if( secuencia[i] == Verde2 ){
+         delay(200);
+      }
+     if( secuencia[i] == Amarillo2 ){
+         delay(200);
+      }
+      digitalWrite(secuencia[i], HIGH); 
+      delay(velocidad);
+      digitalWrite(secuencia[i], LOW); 
+      delay(200);
+   }
+  lcd_1.print("Tu turno...");
+  lcd_1.clear();
+}
+
+
+void leeSecuencia(){
+   int flag = 0; 
+   for(int i = 0; i < nivelActual; i++){ 
+      flag = 0;  
+      while(flag == 0){
+         if(digitalRead(In_Rojo) == LOW){
+            digitalWrite(Rojo, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Rojo;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){ 
+               secuenciaError(); 
+               return;
+            }
+            digitalWrite(Rojo, LOW); 
+         }
+         if(digitalRead(In_Verde) == LOW){
+            digitalWrite(Verde, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Verde;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Verde, LOW);
+         }
+         if(digitalRead(In_Amarillo) == LOW){
+            digitalWrite(Amarillo, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Amarillo;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Amarillo, LOW);
+         }
+         if(digitalRead(In_Naranja) == LOW){
+            digitalWrite(Naranja, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Naranja;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Naranja, LOW);
+         }
+           if(digitalRead(In_Azul) == LOW){
+            digitalWrite(Azul, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Azul;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Azul, LOW);
+         }
+           if(digitalRead(In_Rojo2) == LOW){
+            digitalWrite(Rojo2, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Rojo2;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Rojo2, LOW);
+         }
+          if(digitalRead(In_Blanco) == LOW){
+            digitalWrite(Blanco, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Blanco;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Blanco, LOW);
+         }
+          if(digitalRead(In_Verde2) == LOW){
+            digitalWrite(Verde2, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Verde2;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Verde2, LOW);
+         }
+          if(digitalRead(In_Amarillo2) == LOW){
+            digitalWrite(Amarillo2, HIGH);
+            delay(300);
+            SecuenciaLeida[i] = Amarillo2;
+            flag = 1;
+            delay(200);
+            if(SecuenciaLeida[i] != secuencia[i]){
+               secuenciaError();
+               return;
+            }
+            digitalWrite(Amarillo2, LOW);
+         }
+      }
+   }  
+   secuenciaCorrecta();
+}
+
+
+void generaSecuencia(){
+   randomSeed(millis());   
+   for(int i = 0; i < MaximoNivel; i++){ 
+      secuencia[i] = random(2,11);  
+   }
+}
+
+
+void secuenciaError(){
+   digitalWrite(Rojo, HIGH);
+   digitalWrite(Verde, HIGH);
+   digitalWrite(Amarillo, HIGH);
+   digitalWrite(Naranja, HIGH);
+   digitalWrite(Azul, HIGH);
+   digitalWrite(Rojo2, HIGH);
+   digitalWrite(Blanco, HIGH);
+   digitalWrite(Verde2, HIGH);
+   digitalWrite(Amarillo2, HIGH);
+   delay(250);
+   digitalWrite(Rojo, LOW);
+   digitalWrite(Verde, LOW);
+   digitalWrite(Amarillo, LOW);
+   digitalWrite(Naranja, LOW);
+   digitalWrite(Azul, LOW);
+   digitalWrite(Rojo2, LOW);
+   digitalWrite(Blanco, LOW);
+   digitalWrite(Verde2, LOW);
+   digitalWrite(Amarillo2, LOW);
+   delay(250);
+   velocidad = 500;
+   nivelActual = 1;
+  
+  for(int i = 0; i < MaximoNivel; i++)
+  {
+    secuencia[i] = NULL;
+    Serial.print(secuencia[i]);
+  }
+  lcd_1.print("Perdiste");
+  lcd_1.clear();
+  lcd_1.print("Puntuacion:");
+  lcd_1.print(score);
+  lcd_1.print("/100");
+  lcd_1.clear();
+  score = 0;
+  delay(200);
+  inicio();
+}
+
+
+void secuenciaCorrecta(){
+  
+  	if(nivelActual < MaximoNivel){  
+     	 nivelActual++;
+    }
+  
+    if(nivelActual == 2){
+    	 velocidad -=50;
+     	 score +=20;
+     	 lcd_1.print("Nivel 1 Superado");
+         delay(200);
+         lcd_1.clear();
+         lcd_1.print("Puntuacion:");
+     	 lcd_1.print(score);
+         delay(200);
+     	 lcd_1.clear();
+   	}
+    
+   	if(nivelActual == 4){
+     	 velocidad -=50;
+     	 score +=30;
+     	 lcd_1.print("Nivel 2 Superado");
+         delay(200);
+         lcd_1.clear();
+         lcd_1.print("Puntuacion:");
+     	 lcd_1.print(score);
+         delay(200);
+     	 lcd_1.clear();
+   	}
+    
+   	if(nivelActual == 6){
+    	 velocidad -=50;
+     	 score +=50;
+     	 lcd_1.print("Nivel 3");
+         lcd_1.scrollDisplayLeft();
+         lcd_1.print(" Juego completado");
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+         lcd_1.scrollDisplayLeft();
+      	 delay(400);
+         lcd_1.clear();
+         lcd_1.print("Puntuacion:");
+     	 lcd_1.print(score);
+         delay(200);
+      	 lcd_1.clear();
+         inicio();
+         velocidad = 500;
+         nivelActual = 1;
+         score=0;
+         for(int i = 0; i < MaximoNivel; i++)
+         {
+           secuencia[i] = NULL;
+           Serial.print(secuencia[i]);
+         }
+   	}
+  
+}
